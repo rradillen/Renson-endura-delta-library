@@ -150,7 +150,7 @@ class RensonVentilation:
         """Set a level for a specific time (in minutes)."""
 
         if level == Level.OFF:
-            raise Exception("Off is not a valid type for setting manual level")
+            raise ValueError("Off is not a valid type for setting manual level")
 
         data = ValueData(str(time) + " min " + level.value)
         response = requests.post(self.__get_service_url(ServiceNames.TIMER_FIELD), data=json.dumps(data.__dict__))
@@ -162,7 +162,7 @@ class RensonVentilation:
         """Activate/deactivate breeze feature and give breeze parameters to the function."""
 
         if level == Level.HOLIDAY or level == Level.OFF or level == Level.BREEZE:
-            raise Exception("Holiday, Off, Breeze are not a valid types for setting breeze level")
+            raise ValueError("Holiday, Off, Breeze are not a valid types for setting breeze level")
 
         data = ValueData(str(level.value))
         response = requests.post(
@@ -210,10 +210,10 @@ class RensonVentilation:
         """Enable/disable special auto features of the Renson unit."""
 
         if day == Level.HOLIDAY or day == Level.OFF or day == Level.BREEZE:
-            raise Exception("Holiday, Off, Breeze are not a valid types for setting day level")
+            raise ValueError("Holiday, Off, Breeze are not a valid types for setting day level")
 
         if night == Level.HOLIDAY or night == Level.OFF or night == Level.BREEZE:
-            raise Exception("Holiday, Off, Breeze are not a valid types for setting night level")
+            raise ValueError("Holiday, Off, Breeze are not a valid types for setting night level")
 
         data = ValueData(str(day.value))
         response = requests.post(
