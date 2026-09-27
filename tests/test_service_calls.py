@@ -93,7 +93,7 @@ def test_set_timer_level():
 def test_set_timer_level_rejects_off():
     service = Services("example.mock")
 
-    with pytest.raises(Exception, match="Off is not a valid type"):
+    with pytest.raises(ValueError, match="Off is not a valid type"):
         service.set_timer_level(Level.OFF, 30)
 
 
@@ -128,7 +128,7 @@ def test_set_breeze():
 def test_set_breeze_rejects_invalid_levels(level):
     service = Services("example.mock")
 
-    with pytest.raises(Exception, match="Holiday, Off, Breeze are not a valid types"):
+    with pytest.raises(ValueError, match="Holiday, Off, Breeze are not a valid types"):
         service.set_breeze(level, 20, True)
 
 
@@ -234,7 +234,7 @@ def test_set_pollution():
 def test_set_pollution_rejects_invalid_levels(day, night, error):
     service = Services("example.mock")
 
-    with pytest.raises(Exception, match=error):
+    with pytest.raises(ValueError, match=error):
         service.set_pollution(day, night, True, True, True, 600, 100)
 
 
