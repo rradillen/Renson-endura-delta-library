@@ -311,7 +311,10 @@ def test_is_firmware_up_to_date():
         assert service.is_firmware_up_to_date("Endura Delta 0.0.67")
         assert len(m.request_history) == 1
         assert m.request_history[0].url == Services.firmware_server_url
-        assert m.request_history[0].text == '{"a":"check", "name":"D_0.0.67.fuf"}'
+        assert json.loads(m.request_history[0].text) == {
+            "a": "check",
+            "name": "D_0.0.67.fuf",
+        }
 
 
 def test_is_firmware_up_to_date_non_200():
@@ -323,7 +326,10 @@ def test_is_firmware_up_to_date_non_200():
         assert not service.is_firmware_up_to_date("Endura Delta 0.0.67")
         assert len(m.request_history) == 1
         assert m.request_history[0].url == Services.firmware_server_url
-        assert m.request_history[0].text == '{"a":"check", "name":"D_0.0.67.fuf"}'
+        assert json.loads(m.request_history[0].text) == {
+            "a": "check",
+            "name": "D_0.0.67.fuf",
+        }
 
 
 def test_get_latest_firmware_version():
@@ -335,7 +341,10 @@ def test_get_latest_firmware_version():
         assert service.get_latest_firmware_version() == "1.2.3"
         assert len(m.request_history) == 1
         assert m.request_history[0].url == Services.firmware_server_url
-        assert m.request_history[0].text == '{"a":"check", "name":"D_0.fuf"}'
+        assert json.loads(m.request_history[0].text) == {
+            "a": "check",
+            "name": "D_0.fuf",
+        }
 
 
 def test_get_latest_firmware_version_non_200():
@@ -347,7 +356,10 @@ def test_get_latest_firmware_version_non_200():
         assert service.get_latest_firmware_version() == ""
         assert len(m.request_history) == 1
         assert m.request_history[0].url == Services.firmware_server_url
-        assert m.request_history[0].text == '{"a":"check", "name":"D_0.fuf"}'
+        assert json.loads(m.request_history[0].text) == {
+            "a": "check",
+            "name": "D_0.fuf",
+        }
 
 
 def test_reset_filter():
