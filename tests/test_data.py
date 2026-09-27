@@ -4,7 +4,7 @@ import pytest
 from renson_endura_delta.field_enum import (CO2_FIELD, CURRENT_LEVEL_FIELD,
                                             FROST_PROTECTION_FIELD,
                                             MANUAL_LEVEL_FIELD, CURRENT_AIRFLOW_EXTRACT_FIELD, CO2_QUALITY_FIELD)
-from renson_endura_delta.general_enum import Level, Quality
+from renson_endura_delta.general_enum import DataType, Level, Quality
 from renson_endura_delta.renson import RensonVentilation
 
 responseText: str = '{"ModifiedItems":[{"Name":"Device type","Index":[0,0,0],"Value":"ED 330 T2\/B2 L SHT IAQ CO2 ' \
@@ -225,3 +225,43 @@ def test_get_data_quality():
         value = data.get_field_value(all_data, CO2_QUALITY_FIELD.name)
 
         assert data.parse_quality(value) == Quality.GOOD
+
+
+@pytest.mark.parametrize("value,data_type,expected", [
+    ("533", DataType.NUMERIC, 533),
+    ("Auto Level3", DataType.STRING, "Auto Level3"),
+    ("Auto Level3", DataType.LEVEL, Level.LEVEL3.value),
+    ("1", DataType.BOOLEAN, True),
+    ("1499", DataType.QUALITY, Quality.POOR.value),
+])
+def test_parse_value(value, data_type, expected):
+    data = RensonVentilation("example.mock")
+
+    assert data.parse_value(value, data_type) == expected
+
+
+def test_get_all_data_non_200():
+    with requests_mock.Mocker() as mock:
+        mock.get("http://example.mock/JSON/ModifiedItems?wsn=150324488709",
+                 status_code=503)
+        data = RensonVentilation("example.mock")
+
+        assert data.get_all_data() == ''
+
+
+def test_get_field_value_missing_field():
+    data = RensonVentilation("example.mock")
+
+    assert data.get_field_value({"ModifiedItems": []}, "missing") == ''
+
+
+@pytest.mark.parametrize("value,expected", [
+    ("949", Quality.GOOD),
+    ("950", Quality.POOR),
+    ("1499", Quality.POOR),
+    ("1500", Quality.BAD),
+])
+def test_parse_quality_boundaries(value, expected):
+    data = RensonVentilation("example.mock")
+
+    assert data.parse_quality(value) == expected
